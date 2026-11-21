@@ -1,0 +1,19 @@
+
+# Fichiers générés par Maven
+target/
+
+# NetBeans : paramètres privés
+nbproject/private/
+
+# Secrets et variables d'environnement
+.env
+.env.*
+!.env.example
+mail.properties
+*.secret
+
+# Fichiers temporaires et journaux
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

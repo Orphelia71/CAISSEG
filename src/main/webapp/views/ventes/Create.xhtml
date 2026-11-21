@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.CreateVentesTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <div class="card shadow-sm"><div class="card-body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorClass="alert alert-danger" infoClass="alert alert-success" layout="list" styleClass="list-unstyled"/>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{ventesController.lastCreatedId != null}" layout="block" styleClass="alert alert-info d-flex align-items-center justify-content-between"><span>Vente enregistrée. Vous pouvez imprimer le reçu.</span><span><h:outputLink styleClass="btn btn-primary btn-sm" value="#{request.contextPath}/reports/recu" target="_blank"><f:param name="id" value="#{ventesController.lastCreatedId}"/><i class="fas fa-file-pdf"></i> Reçu PDF</h:outputLink> <h:outputLink styleClass="btn btn-secondary btn-sm" value="#{request.contextPath}/views/ventes/Mail.xhtml" title="Envoyer le reçu par e-mail"><f:param name="id" value="#{ventesController.lastCreatedId}"/><i class="fas fa-envelope"></i> E-mail</h:outputLink></span></h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2" styleClass="form-grid" columnClasses="form-col-label,form-col-input">
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.CreateVentesLabel_description}" for="description" />
+                    <h:inputText styleClass="form-control" id="description" value="#{ventesController.selected.description}" title="#{bundle.CreateVentesTitle_description}" required="true" requiredMessage="#{bundle.CreateVentesRequiredMessage_description}"/>
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.CreateVentesLabel_montant}" for="montant" />
+                    <h:inputText styleClass="form-control" id="montant" value="#{ventesController.selected.montant}" title="#{bundle.CreateVentesTitle_montant}" required="true" requiredMessage="#{bundle.CreateVentesRequiredMessage_montant}"/>
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.CreateVentesLabel_modePaiement}" for="modePaiement" />
+                    <h:selectOneMenu styleClass="form-select" id="modePaiement" value="#{ventesController.selected.modePaiement}" required="true" requiredMessage="#{bundle.CreateVentesRequiredMessage_modePaiement}"><f:selectItem itemValue="" itemLabel="-- Choisir --" noSelectionOption="true"/><f:selectItem itemValue="ESPECES" itemLabel="Espèces"/><f:selectItem itemValue="MOBILE_MONEY" itemLabel="Mobile Money"/><f:selectItem itemValue="CARTE" itemLabel="Carte bancaire"/></h:selectOneMenu>
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.CreateVentesLabel_dateVente}" for="dateVente" />
+                    <h:inputText styleClass="form-control" id="dateVente" value="#{ventesController.selected.dateVente}" title="#{bundle.CreateVentesTitle_dateVente}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:inputText>
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.CreateVentesLabel_caisseId}" for="caisseId" />
+                    <h:selectOneMenu styleClass="form-select" id="caisseId" value="#{ventesController.selected.caisseId}" title="#{bundle.CreateVentesTitle_caisseId}" required="true" requiredMessage="#{bundle.CreateVentesRequiredMessage_caisseId}">
+                        <f:selectItems value="#{caissesController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel rendered="#{authController.admin}" styleClass="form-label fw-semibold" value="#{bundle.CreateVentesLabel_caissierId}" for="caissierId" />
+                    <h:selectOneMenu rendered="#{authController.admin}" styleClass="form-select" id="caissierId" value="#{ventesController.selected.caissierId}" title="#{bundle.CreateVentesTitle_caissierId}" required="true" requiredMessage="#{bundle.CreateVentesRequiredMessage_caissierId}">
+                        <f:selectItems value="#{utilisateursController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <h:commandLink styleClass="btn btn-primary" action="#{ventesController.create}" value="#{bundle.CreateVentesSaveLink}" />
+                <h:commandLink styleClass="btn btn-outline-secondary" action="#{ventesController.prepareList}" value="#{bundle.CreateVentesShowAllLink}" immediate="true"/>
+            </h:form>
+        </div></div>
+        </ui:define>
+    </ui:composition>
+
+</html>

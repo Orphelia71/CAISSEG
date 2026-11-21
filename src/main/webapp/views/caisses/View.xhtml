@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewCaissesTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <div class="card shadow-sm"><div class="card-body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorClass="alert alert-danger" infoClass="alert alert-success" layout="list" styleClass="list-unstyled"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2" styleClass="form-grid view-grid" columnClasses="form-col-label,form-col-input">
+                    <h:outputText value="#{bundle.ViewCaissesLabel_id}"/>
+                    <h:outputText value="#{caissesController.selected.id}" title="#{bundle.ViewCaissesTitle_id}"/>
+                    <h:outputText value="#{bundle.ViewCaissesLabel_numero}"/>
+                    <h:outputText value="#{caissesController.selected.numero}" title="#{bundle.ViewCaissesTitle_numero}"/>
+                    <h:outputText value="#{bundle.ViewCaissesLabel_libelle}"/>
+                    <h:outputText value="#{caissesController.selected.libelle}" title="#{bundle.ViewCaissesTitle_libelle}"/>
+                    <h:outputText value="#{bundle.ViewCaissesLabel_etat}"/>
+                    <h:outputText value="#{caissesController.selected.etat}" title="#{bundle.ViewCaissesTitle_etat}"/>
+                    <h:outputText value="#{bundle.ViewCaissesLabel_caissierId}"/>
+                    <h:outputText value="#{caissesController.selected.caissierId.prenom} #{caissesController.selected.caissierId.nom}" />
+                </h:panelGrid>
+                <h:commandLink styleClass="btn btn-danger btn-sm" action="#{caissesController.destroyAndView}" value="#{bundle.ViewCaissesDestroyLink}"/>
+                <h:link styleClass="btn btn-warning btn-sm" outcome="Edit" value="#{bundle.ViewCaissesEditLink}"/>
+                <h:commandLink styleClass="btn btn-success" action="#{caissesController.prepareCreate}" value="#{bundle.ViewCaissesCreateLink}" />
+                <h:commandLink styleClass="btn btn-outline-secondary" action="#{caissesController.prepareList}" value="#{bundle.ViewCaissesShowAllLink}"/>
+
+            </h:form>
+        </div></div>
+        </ui:define>
+    </ui:composition>
+
+</html>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditVentesTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <div class="card shadow-sm"><div class="card-body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorClass="alert alert-danger" infoClass="alert alert-success" layout="list" styleClass="list-unstyled"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2" styleClass="form-grid" columnClasses="form-col-label,form-col-input">
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.EditVentesLabel_id}" for="id" />
+                    <h:inputText styleClass="form-control" id="id" readonly="true" value="#{ventesController.selected.id}" title="#{bundle.EditVentesTitle_id}" required="true" requiredMessage="#{bundle.EditVentesRequiredMessage_id}"/>
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.EditVentesLabel_description}" for="description" />
+                    <h:inputText styleClass="form-control" id="description" value="#{ventesController.selected.description}" title="#{bundle.EditVentesTitle_description}" required="true" requiredMessage="#{bundle.EditVentesRequiredMessage_description}"/>
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.EditVentesLabel_montant}" for="montant" />
+                    <h:inputText styleClass="form-control" id="montant" value="#{ventesController.selected.montant}" title="#{bundle.EditVentesTitle_montant}" required="true" requiredMessage="#{bundle.EditVentesRequiredMessage_montant}"/>
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.EditVentesLabel_modePaiement}" for="modePaiement" />
+                    <h:selectOneMenu styleClass="form-select" id="modePaiement" value="#{ventesController.selected.modePaiement}" required="true" requiredMessage="#{bundle.CreateVentesRequiredMessage_modePaiement}"><f:selectItem itemValue="" itemLabel="-- Choisir --" noSelectionOption="true"/><f:selectItem itemValue="ESPECES" itemLabel="Espèces"/><f:selectItem itemValue="MOBILE_MONEY" itemLabel="Mobile Money"/><f:selectItem itemValue="CARTE" itemLabel="Carte bancaire"/></h:selectOneMenu>                    
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.EditVentesLabel_dateVente}" for="dateVente" />
+                    <h:inputText styleClass="form-control" id="dateVente" value="#{ventesController.selected.dateVente}" title="#{bundle.EditVentesTitle_dateVente}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:inputText>
+                    <h:outputLabel styleClass="form-label fw-semibold" value="#{bundle.EditVentesLabel_caisseId}" for="caisseId" />
+                    <h:selectOneMenu styleClass="form-select" id="caisseId" value="#{ventesController.selected.caisseId}" title="#{bundle.EditVentesTitle_caisseId}" required="true" requiredMessage="#{bundle.EditVentesRequiredMessage_caisseId}">
+                        <f:selectItems value="#{caissesController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel rendered="#{authController.admin}" styleClass="form-label fw-semibold" value="#{bundle.EditVentesLabel_caissierId}" for="caissierId" />
+                    <h:selectOneMenu rendered="#{authController.admin}" styleClass="form-select" id="caissierId" value="#{ventesController.selected.caissierId}" title="#{bundle.EditVentesTitle_caissierId}" required="true" requiredMessage="#{bundle.EditVentesRequiredMessage_caissierId}">
+                        <f:selectItems value="#{utilisateursController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <h:commandLink styleClass="btn btn-primary" action="#{ventesController.update}" value="#{bundle.EditVentesSaveLink}"/>
+                <h:link styleClass="btn btn-info btn-sm" outcome="View" value="#{bundle.EditVentesViewLink}"/>
+                <h:commandLink styleClass="btn btn-outline-secondary" action="#{ventesController.prepareList}" value="#{bundle.EditVentesShowAllLink}" immediate="true"/>
+            </h:form>
+        </div></div>
+        </ui:define>
+    </ui:composition>
+
+</html>

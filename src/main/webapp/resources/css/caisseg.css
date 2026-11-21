@@ -1,0 +1,11 @@
+/* Complements AdminLTE pour les pages JSF generees (h:panelGrid, h:dataTable, h:messages) */
+.form-grid { width: 100%; max-width: 640px; border-collapse: separate; border-spacing: 0 .75rem; }
+.form-grid .form-col-label { width: 35%; padding-right: 1rem; vertical-align: middle; }
+.form-grid .form-col-input { width: 65%; }
+.view-grid .form-col-label { font-weight: 600; color: var(--bs-secondary-color); }
+.view-grid { border-spacing: 0 .4rem; }
+.card-body a.btn, .card-body input.btn { margin-right: .5rem; }
+.card-body td a.btn { margin-right: .25rem; }
+ul.list-unstyled li.alert { margin-bottom: .5rem; }
+.app-content-header { padding: 1rem .5rem .5rem; }
+form.jsfcrud_list_form table th { white-space: nowrap; }

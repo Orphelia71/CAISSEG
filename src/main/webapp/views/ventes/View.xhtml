@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewVentesTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <div class="card shadow-sm"><div class="card-body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorClass="alert alert-danger" infoClass="alert alert-success" layout="list" styleClass="list-unstyled"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2" styleClass="form-grid view-grid" columnClasses="form-col-label,form-col-input">
+                    <h:outputText value="#{bundle.ViewVentesLabel_id}"/>
+                    <h:outputText value="#{ventesController.selected.id}" title="#{bundle.ViewVentesTitle_id}"/>
+                    <h:outputText value="#{bundle.ViewVentesLabel_description}"/>
+                    <h:outputText value="#{ventesController.selected.description}" title="#{bundle.ViewVentesTitle_description}"/>
+                    <h:outputText value="#{bundle.ViewVentesLabel_montant}"/>
+                    <h:outputText value="#{ventesController.selected.montant}" title="#{bundle.ViewVentesTitle_montant}"><f:convertNumber pattern="#,##0.##" /></h:outputText>
+                    <h:outputText value="#{bundle.ViewVentesLabel_modePaiement}"/>
+                    <h:outputText value="#{ventesController.selected.modePaiement}" title="#{bundle.ViewVentesTitle_modePaiement}"/>
+                    <h:outputText value="#{bundle.ViewVentesLabel_dateVente}"/>
+                    <h:outputText value="#{ventesController.selected.dateVente}" title="#{bundle.ViewVentesTitle_dateVente}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="#{bundle.ViewVentesLabel_caisseId}"/>
+                    <h:outputText value="#{ventesController.selected.caisseId}" title="#{bundle.ViewVentesTitle_caisseId}"/>
+                    <h:outputText value="#{bundle.ViewVentesLabel_caissierId}"/>
+                    <h:outputText value="#{ventesController.selected.caissierId.nom} #{ventesController.selected.caissierId.prenom}"/>
+                </h:panelGrid>
+                <h:outputLink styleClass="btn btn-secondary" value="#{request.contextPath}/reports/recu" target="_blank"><f:param name="id" value="#{ventesController.selected.id}"/><i class="fas fa-file-pdf"></i> Reçu PDF</h:outputLink>
+                <h:outputLink styleClass="btn btn-secondary" value="#{request.contextPath}/views/ventes/Mail.xhtml" title="Envoyer le reçu par e-mail"><f:param name="id" value="#{ventesController.selected.id}"/><i class="fas fa-envelope"></i> E-mail</h:outputLink>
+                <h:commandLink styleClass="btn btn-danger btn-sm" action="#{ventesController.destroyAndView}" value="#{bundle.ViewVentesDestroyLink}"/>
+                <h:link styleClass="btn btn-warning btn-sm" outcome="Edit" value="#{bundle.ViewVentesEditLink}"/>
+                <h:commandLink styleClass="btn btn-success" action="#{ventesController.prepareCreate}" value="#{bundle.ViewVentesCreateLink}" />
+                <h:commandLink styleClass="btn btn-outline-secondary" action="#{ventesController.prepareList}" value="#{bundle.ViewVentesShowAllLink}"/>
+
+            </h:form>
+        </div></div>
+        </ui:define>
+    </ui:composition>
+
+</html>

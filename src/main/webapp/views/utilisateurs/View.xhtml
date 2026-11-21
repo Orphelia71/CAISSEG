@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewUtilisateursTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <div class="card shadow-sm"><div class="card-body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorClass="alert alert-danger" infoClass="alert alert-success" layout="list" styleClass="list-unstyled"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2" styleClass="form-grid view-grid" columnClasses="form-col-label,form-col-input">
+                    <h:outputText value="#{bundle.ViewUtilisateursLabel_id}"/>
+                    <h:outputText value="#{utilisateursController.selected.id}" title="#{bundle.ViewUtilisateursTitle_id}"/>
+                    <h:outputText value="#{bundle.ViewUtilisateursLabel_nom}"/>
+                    <h:outputText value="#{utilisateursController.selected.nom}" title="#{bundle.ViewUtilisateursTitle_nom}"/>
+                    <h:outputText value="#{bundle.ViewUtilisateursLabel_prenom}"/>
+                    <h:outputText value="#{utilisateursController.selected.prenom}" title="#{bundle.ViewUtilisateursTitle_prenom}"/>
+                    <h:outputText value="#{bundle.ViewUtilisateursLabel_login}"/>
+                    <h:outputText value="#{utilisateursController.selected.login}" title="#{bundle.ViewUtilisateursTitle_login}"/>
+                    <h:outputText value="#{bundle.ViewUtilisateursLabel_motDePasse}"/>
+                    <h:outputText value="••••••" title="#{bundle.ViewUtilisateursTitle_motDePasse}"/>
+                    <h:outputText value="#{bundle.ViewUtilisateursLabel_role}"/>
+                    <h:outputText value="#{utilisateursController.selected.role}" title="#{bundle.ViewUtilisateursTitle_role}"/>
+                    <h:outputText value="#{bundle.ViewUtilisateursLabel_actif}"/>
+                    <h:outputText value="#{utilisateursController.selected.actif}" title="#{bundle.ViewUtilisateursTitle_actif}"/>
+                    <h:outputText value="#{bundle.ViewUtilisateursLabel_dateCreation}"/>
+                    <h:outputText value="#{utilisateursController.selected.dateCreation}" title="#{bundle.ViewUtilisateursTitle_dateCreation}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                </h:panelGrid>
+                <h:commandLink styleClass="btn btn-danger btn-sm" action="#{utilisateursController.destroyAndView}" value="#{bundle.ViewUtilisateursDestroyLink}"/>
+                <h:link styleClass="btn btn-warning btn-sm" outcome="Edit" value="#{bundle.ViewUtilisateursEditLink}"/>
+                <h:commandLink styleClass="btn btn-success" action="#{utilisateursController.prepareCreate}" value="#{bundle.ViewUtilisateursCreateLink}" />
+                <h:commandLink styleClass="btn btn-outline-secondary" action="#{utilisateursController.prepareList}" value="#{bundle.ViewUtilisateursShowAllLink}"/>
+
+            </h:form>
+        </div></div>
+        </ui:define>
+    </ui:composition>
+
+</html>

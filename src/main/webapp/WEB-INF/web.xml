@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+    <context-param>
+        <param-name>jakarta.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>index.xhtml</welcome-file>
+    </welcome-file-list>
+
+    <!-- ========== Securite JAAS / Elytron (WildFly) ========== -->
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>CAISSEG</realm-name>
+        <form-login-config>
+            <form-login-page>/login.xhtml</form-login-page>
+            <form-error-page>/login.xhtml?error=true</form-error-page>
+        </form-login-config>
+    </login-config>
+
+    <security-role><role-name>RESPONSABLE</role-name></security-role>
+    <security-role><role-name>CAISSIER</role-name></security-role>
+
+        <!-- Page d'accueil, ventes et recus PDF : responsable et gerant (CAISSIER) -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Ventes et recus</web-resource-name>
+            <url-pattern>/index.xhtml</url-pattern>
+            <url-pattern>/views/ventes/*</url-pattern>
+            <url-pattern>/reports/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>RESPONSABLE</role-name>
+            <role-name>CAISSIER</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <!-- Caisses et utilisateurs : responsable uniquement -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Administration</web-resource-name>
+            <url-pattern>/views/caisses/*</url-pattern>
+            <url-pattern>/views/utilisateurs/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>RESPONSABLE</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+</web-app>

@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html">
+    <h:head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Connexion | CAISSEG</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0/dist/css/adminlte.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    </h:head>
+    <h:body styleClass="login-page bg-body-secondary">
+        <div class="login-box">
+            <div class="card card-outline card-primary">
+                <div class="card-header text-center">
+                    <h1 class="mb-0"><i class="fas fa-cash-register text-primary"></i> <b>CAISSEG</b></h1>
+                </div>
+                <div class="card-body login-card-body">
+                    <p class="login-box-msg">Connectez-vous pour acc&#233;der &#224; votre espace</p>
+
+                    <!-- Formulaire de connexion standard : le serveur (JAAS/Elytron) verifie l'identifiant -->
+                    <form method="post" action="j_security_check">
+                        <h:panelGroup rendered="#{param.error != null}" layout="block" styleClass="alert alert-danger">
+                            Identifiant ou mot de passe incorrect, ou compte d&#233;sactiv&#233;.
+                        </h:panelGroup>
+                        <div class="mb-3">
+                            <label class="form-label" for="j_username">Identifiant</label>
+                            <input type="text" id="j_username" name="j_username" class="form-control" required="required" autofocus="autofocus" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="j_password">Mot de passe</label>
+                            <input type="password" id="j_password" name="j_password" class="form-control" required="required" />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </h:body>
+</html>

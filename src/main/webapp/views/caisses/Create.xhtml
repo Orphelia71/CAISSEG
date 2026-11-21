@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+    <ui:composition template="/template.xhtml">
+
+        <ui:define name="title">
+            <h:outputText value="Ajouter une caisse"/>
+        </ui:define>
+
+        <ui:define name="body">
+            <div class="card shadow-sm"><div class="card-body">
+
+            <h2>Ajouter une nouvelle caisse</h2>
+
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color:red"
+                            infoStyle="color:green"
+                            layout="table"/>
+            </h:panelGroup>
+
+            <h:form>
+
+                <h:panelGrid columns="2" styleClass="form-grid" columnClasses="form-col-label,form-col-input">
+
+                    <h:outputLabel styleClass="form-label fw-semibold" value="Numéro de caisse :" for="numero"/>
+                    <h:inputText styleClass="form-control" id="numero"
+                                 value="#{caissesController.selected.numero}"
+                                 required="true"
+                                 requiredMessage="Le numéro est obligatoire."/>
+
+                    <h:outputLabel styleClass="form-label fw-semibold" value="Libellé :" for="libelle"/>
+                    <h:inputText styleClass="form-control" id="libelle"
+                                 value="#{caissesController.selected.libelle}"
+                                 required="true"
+                                 maxlength="100"
+                                 requiredMessage="Le libellé est obligatoire."/>
+
+                    <h:outputLabel styleClass="form-label fw-semibold" value="État :" for="etat"/>
+                    <h:selectOneMenu styleClass="form-select" id="etat"
+                                     value="#{caissesController.selected.etat}"
+                                     required="true">
+                        <f:selectItem itemLabel="Choisir un état"
+                                      itemValue=""
+                                      noSelectionOption="true"/>
+                        <f:selectItem itemLabel="Disponible" itemValue="DISPONIBLE"/>
+                        <f:selectItem itemLabel="Occupée" itemValue="OCCUPEE"/>
+                        <f:selectItem itemLabel="En maintenance" itemValue="INACTIVE"/>
+                    </h:selectOneMenu>
+
+                    <h:outputLabel styleClass="form-label fw-semibold" value="Caissier :" for="caissierId"/>
+                    <h:selectOneMenu styleClass="form-select" id="caissierId"
+                                     value="#{caissesController.selected.caissierId}">
+                        <f:selectItem itemLabel="Aucun caissier"
+                                      itemValue="#{null}"
+                                      noSelectionOption="true"/>
+                        <f:selectItems
+                            value="#{utilisateursController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+
+                </h:panelGrid>
+
+                <h:commandButton value="Enregistrer"
+                                 action="#{caissesController.create}"/>
+
+                <h:link styleClass="btn btn-outline-secondary" outcome="/views/caisses/List"
+                               value="Voir toutes les caisses"/>
+
+            </h:form>
+
+        </div></div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+    <ui:composition template="/template.xhtml">
+        <ui:define name="metadata"><f:viewAction action="#{authController.redirectGerant}" /></ui:define>
+        <ui:define name="title">Tableau de bord</ui:define>
+        <ui:define name="body">
+
+            <!-- Ventes -->
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-primary">
+                        <div class="inner"><h3><h:outputText value="#{dashboardController.nbVentes}" /></h3><p>Ventes enregistr&#233;es</p></div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-info">
+                        <div class="inner"><h3><h:outputText value="#{dashboardController.nbVentesAujourdhui}" /></h3><p>Ventes aujourd'hui</p></div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-success">
+                        <div class="inner">
+                            <h3><h:outputText value="#{dashboardController.totalAujourdhui}"><f:convertNumber pattern="#,##0.##" /></h:outputText></h3>
+                            <p>FCFA encaiss&#233;s aujourd'hui</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-secondary">
+                        <div class="inner">
+                            <h3><h:outputText value="#{dashboardController.totalVentes}"><f:convertNumber pattern="#,##0.##" /></h:outputText></h3>
+                            <p>FCFA de ventes au total</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caisses -->
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-success">
+                        <div class="inner"><h3><h:outputText value="#{dashboardController.disponibles}" /></h3><p>Caisses disponibles</p></div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-danger">
+                        <div class="inner"><h3><h:outputText value="#{dashboardController.occupees}" /></h3><p>Caisses occup&#233;es</p></div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-warning">
+                        <div class="inner"><h3><h:outputText value="#{dashboardController.maintenance}" /></h3><p>Caisses en maintenance</p></div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box text-bg-dark">
+                        <div class="inner"><h3><h:outputText value="#{dashboardController.nbGerants}" /></h3><p>G&#233;rants</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dernieres ventes -->
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">Derni&#232;res ventes</h3>
+                    <h:link outcome="/views/ventes/List" value="Voir toutes les ventes" styleClass="btn btn-outline-primary btn-sm" />
+                </div>
+                <div class="card-body p-0">
+                    <h:dataTable value="#{dashboardController.dernieresVentes}" var="v"
+                                 styleClass="table table-striped mb-0" headerClass="table-light">
+                        <h:column><f:facet name="header">N&#176;</f:facet><h:outputText value="#{v.id}" /></h:column>
+                        <h:column><f:facet name="header">Date</f:facet>
+                            <h:outputText value="#{v.dateVente}"><f:convertDateTime pattern="dd/MM/yyyy HH:mm" /></h:outputText></h:column>
+                        <h:column><f:facet name="header">Description</f:facet><h:outputText value="#{v.description}" /></h:column>
+                        <h:column><f:facet name="header">Caissier</f:facet>
+                            <h:outputText value="#{v.caissierId.prenom} #{v.caissierId.nom}" /></h:column>
+                        <h:column><f:facet name="header">Montant (FCFA)</f:facet>
+                            <h:outputText value="#{v.montant}"><f:convertNumber pattern="#,##0.##" /></h:outputText></h:column>
+                    </h:dataTable>
+                </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

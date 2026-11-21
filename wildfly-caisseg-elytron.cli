@@ -1,0 +1,30 @@
+# CAISSEG - configuration Elytron / Undertow pour WildFly 41
+# A executer une seule fois, serveur WildFly demarre et datasource GestionCaisseDS activee.
+# Depuis le dossier bin de WildFly :
+# jboss-cli.bat --connect --file=chemin\\vers\\wildfly-caisseg-elytron.cli
+#
+# Le datasource doit etre enregistre sous le nom GestionCaisseDS et pointer
+# vers java:/jdbc/GestionCaisseDS (PostgreSQL).
+#
+# Les mots de passe sont lus en clair depuis utilisateurs.mot_de_passe.
+# Les utilisateurs inactifs (actif = FALSE) ne peuvent pas s'authentifier.
+
+if (outcome == success) of /subsystem=undertow/application-security-domain=caisseg:read-resource
+    /subsystem=undertow/application-security-domain=caisseg:remove
+end-if
+
+if (outcome == success) of /subsystem=elytron/security-domain=caisseg:read-resource
+    /subsystem=elytron/security-domain=caisseg:remove
+end-if
+
+if (outcome == success) of /subsystem=elytron/jdbc-realm=caisseg-realm:read-resource
+    /subsystem=elytron/jdbc-realm=caisseg-realm:remove
+end-if
+
+/subsystem=elytron/jdbc-realm=caisseg-realm:add(principal-query=[{sql="SELECT mot_de_passe FROM utilisateurs WHERE login = ? AND actif = TRUE",data-source=GestionCaisseDS,clear-password-mapper={password-index=1}},{sql="SELECT role FROM utilisateurs WHERE login = ? AND actif = TRUE",data-source=GestionCaisseDS,attribute-mapping=[{index=1,to=groups}]}])
+
+/subsystem=elytron/security-domain=caisseg:add(default-realm=caisseg-realm,realms=[{realm=caisseg-realm,role-decoder=groups-to-roles}],permission-mapper=default-permission-mapper)
+
+/subsystem=undertow/application-security-domain=caisseg:add(security-domain=caisseg)
+
+reload
