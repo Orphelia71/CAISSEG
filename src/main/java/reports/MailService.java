@@ -2,21 +2,17 @@
 package reports;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.mail.Authenticator;
-import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
-import jakarta.mail.PasswordAuthentication;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
-import jakarta.mail.util.ByteArrayDataSource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Properties;
 
 @ApplicationScoped
@@ -28,25 +24,19 @@ public class MailService {
         if (config == null) {
             Properties p = new Properties();
 
-            try (InputStream in =
-                    getClass().getResourceAsStream("/mail.properties")) {
-
+            try (InputStream in = getClass().getResourceAsStream("/mail.properties")) {
                 if (in == null) {
-                    throw new IOException(
-                            "Fichier mail.properties introuvable."
-                    );
+                    throw new IOException("Fichier mail.properties introuvable.");
                 }
 
                 p.load(new java.io.InputStreamReader(
-                        in, StandardCharsets.UTF_8
-                ));
+                        in, StandardCharsets.UTF_8));
             }
 
-            String envPassword =
-                    System.getenv("CAISSEG_MAIL_PASSWORD");
+            String apiKey = System.getenv("BREVO_API_KEY");
 
-            if (envPassword != null && !envPassword.isBlank()) {
-                p.setProperty("password", envPassword.trim());
+            if (apiKey != null && !apiKey.isBlank()) {
+                p.setProperty("api.key", apiKey.trim());
             }
 
             config = p;
@@ -59,10 +49,8 @@ public class MailService {
         try {
             Properties p = config();
 
-            return !p.getProperty("host", "").isBlank()
-                    && !p.getProperty("from", "").isBlank()
-                    && !p.getProperty("user", "").isBlank()
-                    && !p.getProperty("password", "").isBlank();
+            return !p.getProperty("api.key", "").isBlank()
+                    && !p.getProperty("from", "").isBlank();
 
         } catch (IOException e) {
             return false;
@@ -78,69 +66,100 @@ public class MailService {
     ) throws MessagingException, IOException {
 
         Properties c = config();
-        Properties smtp = new Properties();
 
-        smtp.put("mail.smtp.host", c.getProperty("host"));
-        smtp.put("mail.smtp.port", c.getProperty("port", "587"));
-        smtp.put("mail.smtp.connectiontimeout", "10000");
-        smtp.put("mail.smtp.timeout", "15000");
-        smtp.put("mail.smtp.writetimeout", "15000");
-        smtp.put("mail.smtp.starttls.enable",
-                c.getProperty("starttls", "true"));
-        smtp.put("mail.smtp.ssl.enable",
-                c.getProperty("ssl", "false"));
+        String apiKey = c.getProperty("api.key", "").trim();
+        String from = c.getProperty("from", "").trim();
+        String fromName = c.getProperty("from.name", "CAISSEG");
 
-        String user = c.getProperty("user", "");
-        String password = c.getProperty("password", "");
+        if (apiKey.isBlank() || from.isBlank()) {
+            throw new MessagingException(
+                    "Configuration Brevo incomplète.");
+        }
 
-        smtp.put("mail.smtp.auth", "true");
+        if (pdf == null || pdf.length == 0) {
+            throw new MessagingException("Le fichier PDF est vide.");
+        }
 
-        Session session = Session.getInstance(
-                smtp,
-                new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication
-                            getPasswordAuthentication() {
-                        return new PasswordAuthentication(
-                                user, password
-                        );
-                    }
-                }
-        );
+        InternetAddress[] recipients =
+                InternetAddress.parse(to, true);
 
-        MimeMessage msg = new MimeMessage(session);
+        StringBuilder toJson = new StringBuilder("[");
 
-        msg.setFrom(new InternetAddress(
-                c.getProperty("from"),
-                c.getProperty("from.name", "CAISSEG"),
-                "UTF-8"
-        ));
+        for (int i = 0; i < recipients.length; i++) {
+            if (i > 0) {
+                toJson.append(",");
+            }
 
-        msg.setRecipients(
-                Message.RecipientType.TO,
-                InternetAddress.parse(to, true)
-        );
+            toJson.append("{\"email\":\"")
+                    .append(jsonEscape(recipients[i].getAddress()))
+                    .append("\"}");
+        }
 
-        msg.setSubject(subject, "UTF-8");
+        toJson.append("]");
 
-        MimeBodyPart body = new MimeBodyPart();
-        body.setText(text, "UTF-8");
+        String pdfBase64 = Base64.getEncoder()
+                .encodeToString(pdf);
 
-        MimeBodyPart attachment = new MimeBodyPart();
-        attachment.setDataHandler(
-                new jakarta.activation.DataHandler(
-                        new ByteArrayDataSource(pdf, "application/pdf")
-                )
-        );
+        String json = "{"
+                + "\"sender\":{"
+                + "\"name\":\"" + jsonEscape(fromName) + "\","
+                + "\"email\":\"" + jsonEscape(from) + "\""
+                + "},"
+                + "\"to\":" + toJson + ","
+                + "\"subject\":\"" + jsonEscape(subject) + "\","
+                + "\"textContent\":\"" + jsonEscape(text) + "\","
+                + "\"attachment\":[{"
+                + "\"name\":\"" + jsonEscape(filename) + "\","
+                + "\"content\":\"" + pdfBase64 + "\""
+                + "}]"
+                + "}";
 
-        attachment.setFileName(filename);
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(java.time.Duration.ofSeconds(15))
+                .build();
 
-        MimeMultipart multipart = new MimeMultipart();
-        multipart.addBodyPart(body);
-        multipart.addBodyPart(attachment);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(
+                        "https://api.brevo.com/v3/smtp/email"))
+                .header("api-key", apiKey)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .timeout(java.time.Duration.ofSeconds(30))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        json, StandardCharsets.UTF_8))
+                .build();
 
-        msg.setContent(multipart);
+        try {
+            HttpResponse<String> response = client.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString(
+                            StandardCharsets.UTF_8));
 
-        Transport.send(msg);
+            if (response.statusCode() != 201) {
+                throw new MessagingException(
+                        "Erreur Brevo HTTP "
+                        + response.statusCode()
+                        + " : " + response.body());
+            }
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+
+            throw new MessagingException(
+                    "Envoi interrompu : " + e.getMessage());
+        }
+    }
+
+    private String jsonEscape(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        return value
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 }
