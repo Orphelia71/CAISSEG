@@ -1,3 +1,4 @@
+
 # Étape 1 : compilation de CAISSEG
 FROM maven:3.9-eclipse-temurin-21 AS build
 
@@ -10,8 +11,8 @@ RUN mvn -B clean package -DskipTests
 # Étape 2 : serveur WildFly
 FROM quay.io/wildfly/wildfly:41.0.1.Final-jdk21
 
-# Options transmises directement à Java
-ENV JAVA_OPTS="-Xms32m -Xmx160m -XX:MaxMetaspaceSize=192m -XX:ReservedCodeCacheSize=32m -Xss512k -XX:+UseSerialGC"
+# Limitation de la consommation mémoire Java
+ENV JAVA_OPTS="-Xms32m -Xmx160m -XX:MaxMetaspaceSize=192m -XX:ReservedCodeCacheSize=32m -XX:MaxDirectMemorySize=32m -XX:ActiveProcessorCount=2 -Xss512k -XX:+UseSerialGC"
 
 # Installation du pilote PostgreSQL
 COPY docker/postgresql/ /opt/jboss/wildfly/modules/system/layers/base/com/postgresql/main/
