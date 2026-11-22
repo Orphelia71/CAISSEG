@@ -22,4 +22,4 @@ COPY --from=build /build/target/CAISSEG-1.0-SNAPSHOT.war /opt/jboss/wildfly/stan
 EXPOSE 10000
 
 # Démarrage de WildFly sur le port fourni par Render
-CMD ["/bin/sh", "-c", "exec /opt/jboss/wildfly/bin/standalone.sh --server-config=standalone-full-render.xml -b 0.0.0.0 -Djboss.http.port=${PORT:-10000}"]
+CMD ["/bin/sh", "-c", "exec /opt/jboss/wildfly/bin/standalone.sh --server-config=standalone-full-render.xml -b 0.0.0.0 -Djboss.http.port=${PORT:-10000} -Xms64m -Xmx256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC"]
